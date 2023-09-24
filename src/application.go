@@ -49,10 +49,31 @@ func (noteStore *NoteStore) GetNote(id int) (Note, error) {
 	noteStore.Lock()
 	defer noteStore.Unlock()
 
-	t, ok := noteStore.notes[id]
+	n, ok := noteStore.notes[id]
 	if ok {
-		return t, nil
+		return n, nil
 	} else {
 		return Note{}, fmt.Errorf("note with id=%d not found", id)
 	}
+}
+
+func (noteStore *NoteStore) UpdateNote(id int, content string, tags []string) error {
+	noteStore.Lock()
+	defer noteStore.Unlock()
+
+	n, ok := noteStore.notes[id]
+
+	if ok {
+		noteStore.notes[id] = Note{
+			Id:            n.Id,
+			Content:       content,
+			Tags:          tags,
+			Created:       n.Created,
+			LastUpdatedAt: time.Now(),
+		}
+		return nil
+	} else {
+		return fmt.Errorf("note with id=%d not found", id)
+	}
+
 }

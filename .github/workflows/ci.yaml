@@ -8,6 +8,7 @@ on: [pull_request]
 jobs:
 
   build:
+    name: go_ci
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

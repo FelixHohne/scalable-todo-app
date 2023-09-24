@@ -1,4 +1,4 @@
-package src
+package backend
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ type NoteStore struct {
 	NextId int
 }
 
-func CreateNotStore() *NoteStore {
+func createNotStore() *NoteStore {
 	noteStore := &NoteStore{}
 	noteStore.notes = make(map[int]Note)
 	noteStore.NextId = 0

@@ -1,13 +1,12 @@
-package test
+package backend
 
 import (
 	"testing"
 	"time"
-	"todo-app/src"
 )
 
 func TestNoteStoreCreate(t *testing.T) {
-	noteStore := src.CreateNotStore()
+	noteStore := createNotStore()
 	// [] is not legal syntax in go.
 	noteId := noteStore.CreateNote("", []string{})
 
@@ -32,7 +31,7 @@ func TestNoteStoreCreate(t *testing.T) {
 
 func TestNoteStoreInvalidGet(t *testing.T) {
 
-	noteStore := src.CreateNotStore()
+	noteStore := createNotStore()
 
 	_, err := noteStore.GetNote(0)
 
@@ -50,7 +49,7 @@ func TestNoteStoreInvalidGet(t *testing.T) {
 
 func TestNoteUpdate(t *testing.T) {
 
-	noteStore := src.CreateNotStore()
+	noteStore := createNotStore()
 	noteId := noteStore.CreateNote("", []string{})
 	note, _ := noteStore.GetNote(noteId)
 

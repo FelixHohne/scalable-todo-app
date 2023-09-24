@@ -17,29 +17,31 @@ type Note struct {
 type NoteStore struct {
 	sync.Mutex
 	notes  map[int]Note
-	nextId int
+	NextId int
 }
 
-func create() *NoteStore {
+func CreateNotStore() *NoteStore {
 	noteStore := &NoteStore{}
 	noteStore.notes = make(map[int]Note)
-	noteStore.nextId = 0
+	noteStore.NextId = 0
 	return noteStore
 }
 
 func (noteStore *NoteStore) CreateNote(content string, tags []string) int {
 	noteStore.Lock()
 	defer noteStore.Unlock()
+	id := noteStore.NextId
 
 	note := Note{
-		Id:            noteStore.nextId,
+		Id:            id,
 		Content:       content,
 		Tags:          make([]string, len(tags)),
 		Created:       time.Now(),
 		LastUpdatedAt: time.Now(),
 	}
 	copy(note.Tags, tags)
-	noteStore.nextId++
+	noteStore.notes[id] = note
+	noteStore.NextId++
 	return note.Id
 }
 

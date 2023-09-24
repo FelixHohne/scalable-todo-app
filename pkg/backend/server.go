@@ -9,7 +9,7 @@ import (
 )
 
 type NoteServer struct {
-	router    *mux.Router
+	Router    *mux.Router
 	NoteStore *NoteStore
 }
 
@@ -29,9 +29,9 @@ type RequestNote struct {
 
 func (ns *NoteServer) RegisterRoutes() {
 
-	ns.router.HandleFunc("/note/", ns.createNoteHandler).Methods("POST")
-	ns.router.HandleFunc("/note/{id:[0-9]+}/", ns.getNoteHandler).Methods("GET")
-	ns.router.HandleFunc("/note/{id:[0-9]+}/", ns.updateNoteHandler).Methods("PUT")
+	ns.Router.HandleFunc("/note/", ns.createNoteHandler).Methods("POST")
+	ns.Router.HandleFunc("/note/{id:[0-9]+}/", ns.getNoteHandler).Methods("GET")
+	ns.Router.HandleFunc("/note/{id:[0-9]+}/", ns.updateNoteHandler).Methods("PUT")
 }
 
 func (ns *NoteServer) createNoteHandler(w http.ResponseWriter, req *http.Request) {
@@ -43,6 +43,7 @@ func (ns *NoteServer) createNoteHandler(w http.ResponseWriter, req *http.Request
 	// Enforce a JSON Content-Type.
 	contentType := req.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

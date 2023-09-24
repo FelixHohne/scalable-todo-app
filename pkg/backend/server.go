@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"mime"
 	"net/http"
+	"strconv"
 )
 
 type NoteServer struct {
@@ -21,18 +22,19 @@ func CreateServer() NoteServer {
 	return server
 }
 
+type RequestNote struct {
+	Content string   `json:"text"`
+	Tags    []string `json:"tags"`
+}
+
 func (ns *NoteServer) RegisterRoutes() {
 
 	ns.router.HandleFunc("/note/", ns.createNoteHandler).Methods("POST")
-	ns.router.HandleFunc("/task/{id:[0-9]+}/", ns.getNoteHandler).Methods("GET")
-	ns.router.HandleFunc("/task/{id:[0-9]+}/", ns.updateNoteHandler).Methods("PUT")
+	ns.router.HandleFunc("/note/{id:[0-9]+}/", ns.getNoteHandler).Methods("GET")
+	ns.router.HandleFunc("/note/{id:[0-9]+}/", ns.updateNoteHandler).Methods("PUT")
 }
 
 func (ns *NoteServer) createNoteHandler(w http.ResponseWriter, req *http.Request) {
-	type RequestNote struct {
-		Content string   `json:"text"`
-		Tags    []string `json:"tags"`
-	}
 
 	type ResponseId struct {
 		Id int `json:"id"`
@@ -63,11 +65,44 @@ func (ns *NoteServer) createNoteHandler(w http.ResponseWriter, req *http.Request
 }
 
 func (ns *NoteServer) getNoteHandler(w http.ResponseWriter, req *http.Request) {
+	id, _ := strconv.Atoi(mux.Vars(req)["id"])
+	task, err := ns.NoteStore.GetNote(id)
 
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	renderJSON(w, task)
 }
 
 func (ns *NoteServer) updateNoteHandler(w http.ResponseWriter, req *http.Request) {
 
+	id, _ := strconv.Atoi(mux.Vars(req)["id"])
+	contentType := req.Header.Get("Content-Type")
+	mediaType, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediaType != "application/json" {
+		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	dec := json.NewDecoder(req.Body)
+	dec.DisallowUnknownFields()
+	var rn RequestNote
+	if err := dec.Decode(&rn); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = ns.NoteStore.UpdateNote(id, rn.Content, rn.Tags)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
 }
 
 // interface{} means we accept any data type as argument

@@ -2,7 +2,6 @@ package backend
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"mime"
 	"net/http"
@@ -37,7 +36,6 @@ func (ns *NoteServer) RegisterRoutes() {
 
 func (ns *NoteServer) createNoteHandler(w http.ResponseWriter, req *http.Request) {
 
-	fmt.Printf("Hello World")
 	type ResponseId struct {
 		Id int `json:"id"`
 	}

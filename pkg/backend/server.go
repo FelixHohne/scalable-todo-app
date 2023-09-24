@@ -75,8 +75,10 @@ func renderJSON(w http.ResponseWriter, v interface{}) {
 	js, err := json.Marshal(v) // Convert v into json
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	_, err = w.Write(js)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

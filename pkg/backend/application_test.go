@@ -56,7 +56,7 @@ func TestNoteUpdate(t *testing.T) {
 	if note.Content != "" {
 		t.Fail()
 	}
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 	err := noteStore.UpdateNote(noteId, "Hello World", []string{})
 	if err != nil {
 		t.Fatal(err)

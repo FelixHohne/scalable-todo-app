@@ -9,7 +9,7 @@ import (
 
 func main() {
 	server := backend.CreateServer()
-	server.NoteStore.CreateNote("Introduction Note", []string{})
+	server.NoteStore.CreateNote("Introduction Note", []string{}) 
 	server.RegisterRoutes()
 	fmt.Printf("Beginning server\n")
 	err := http.ListenAndServe(":8080", server.Router)
